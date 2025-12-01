@@ -10,12 +10,21 @@ public class Personagem {
     private int atqBase = 4;
     private ClassePersonagem classe;
     private boolean cansado = false;
+    private boolean machucado = false;
 
-    public boolean getCansado(){
+    public boolean getMachucado(){
+        return machucado;
+    }
+
+    public void setMachucado(boolean machucado){
+        this.machucado = machucado;
+    }
+
+    public boolean getCansado() {
         return cansado;
     }
 
-    public void setCansado(boolean cansado){
+    public void setCansado(boolean cansado) {
         this.cansado = cansado;
     }
 
@@ -43,21 +52,23 @@ public class Personagem {
         this.classe = classe;
     }
 
-    public ClassePersonagem getClasse(){
+    public ClassePersonagem getClasse() {
         return classe;
     }
 
-    public int atacar(int atqBase){
+    public int atacar(int atqBase) {
         return atqBase;
     }
 
-    public void habilidadeEspecial(ArrayList<Personagem> aliados, ArrayList<Personagem> inimigos){
+    public void habilidadeEspecial(ArrayList<Personagem> aliados, ArrayList<Personagem> inimigos, boolean encontrado){
 
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("%s, o %s - %d HP\n", this.nome, this.classe, this.vida);
     }
-
 }
+
+
+

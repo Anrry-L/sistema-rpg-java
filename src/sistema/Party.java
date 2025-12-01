@@ -93,22 +93,42 @@ public class Party {
             System.out.println("-------------------");
 
             for (Personagem aliado : aliados) {
-                System.out.printf("Quem o %s irá atacar?\n", aliado.getNome());
-                String inimigoEscolhido = s.nextLine();
+                System.out.printf("O que %s irá fazer?\n", aliado.getNome());
+                System.out.println("1 - Atacar");
+                System.out.println("2 - Habilidade Especial");
 
-                for (Personagem inimigo : inimigos) {
-                    if (inimigoEscolhido.equalsIgnoreCase(inimigo.getNome())) {
-                        encontrado = true;
-                        int danoAliado = aliado.atacar(aliado.getAtqBase());
-                        inimigo.setVida(inimigo.getVida() - danoAliado);
-                        System.out.printf("%s deu %d de dano em %s\n", aliado.getNome(), danoAliado, inimigo.getNome());
+                int escolha = s.nextInt();
+                s.nextLine();
 
-                        if (inimigo.getVida() <= 0) {
-                            System.out.printf("%s morreu!\n", inimigo.getNome());
-                            inimigos.remove(inimigo);
-                            break;
+                switch (escolha){
+                    case 1 :
+                        System.out.printf("Quem %s irá atacar?\n", aliado.getNome());
+                        String inimigoEscolhido = s.nextLine();
+
+                        for (Personagem inimigo : inimigos) {
+
+                        if (inimigoEscolhido.equalsIgnoreCase(inimigo.getNome())) {
+                            encontrado = true;
+                            int danoAliado = aliado.atacar(aliado.getAtqBase());
+                            if (inimigo.getMachucado()) {
+                                inimigo.setVida(inimigo.getVida() - (danoAliado + 3));
+                                System.out.printf("%s deu %d de dano (+3) em %s\n", aliado.getNome(), danoAliado, inimigo.getNome());
+                            }
+                            else {
+                                inimigo.setVida(inimigo.getVida() - danoAliado);
+                                System.out.printf("%s deu %d de dano em %s\n", aliado.getNome(), danoAliado, inimigo.getNome());
+                            }
+                            if (inimigo.getVida() <= 0) {
+                                System.out.printf("%s morreu!\n", inimigo.getNome());
+                                inimigos.remove(inimigo);
+                                break;
+                            }
                         }
-                    }
+                    } break;
+
+                    case 2 : encontrado = true; aliado.habilidadeEspecial(aliados, inimigos, encontrado); break;
+
+                    default : System.out.println("Opção inválida");
                 }
             }
 
@@ -120,26 +140,103 @@ public class Party {
             System.out.println("Não existem aliados em campo.");
         }
 
-        if(!inimigos.isEmpty()) {
+        if(!inimigos.isEmpty() || !aliados.isEmpty()) {
 
             System.out.println("Turno dos inimigos!");
             System.out.println("----------------------");
 
             for (Personagem inimigo : inimigos) {
-                int danoInimigo = inimigo.atacar(inimigo.getAtqBase());
-                Personagem aliadoEscolhido = aliados.get(r.nextInt(aliados.size()));
-                aliadoEscolhido.setVida(aliadoEscolhido.getVida() - danoInimigo);
-                System.out.printf("%s deu %d de dano em %s\n", inimigo.getNome(), danoInimigo, aliadoEscolhido.getNome());
+                inimigo.setCansado(false);
+                int rng = r.nextInt(0, 2);
+                System.out.println(rng);
 
-                if (aliadoEscolhido.getVida() <= 0) {
-                    System.out.printf("%s morreu!\n", aliadoEscolhido.getNome());
-                    aliados.remove(aliadoEscolhido);
-                    break;
+                if (rng == 0) {
+
+                    int danoInimigo = inimigo.atacar(inimigo.getAtqBase());
+                    Personagem aliadoEscolhido = aliados.get(r.nextInt(aliados.size()));
+                    if (aliadoEscolhido.getMachucado()) {
+                        aliadoEscolhido.setVida(aliadoEscolhido.getVida() - (danoInimigo + 3));
+                        System.out.printf("%s deu %d de dano (+3) em %s\n", inimigo.getNome(), danoInimigo, aliadoEscolhido.getNome());
+                    }
+                    else {
+                        aliadoEscolhido.setVida(aliadoEscolhido.getVida() - danoInimigo);
+                        System.out.printf("%s deu %d de dano em %s\n", inimigo.getNome(), danoInimigo, aliadoEscolhido.getNome());
+                    }
+
+                    if (aliadoEscolhido.getVida() <= 0) {
+                        System.out.printf("%s morreu!\n", aliadoEscolhido.getNome());
+                        aliados.remove(aliadoEscolhido);
+                        break;
+
+                    }
+                }
+                else {
+                    if (!inimigo.getCansado()) {
+
+                        Personagem aliadoParaRemover = null;
+
+                        if (inimigo.getClasse().equals(ClassePersonagem.GUERREIRO)) {
+
+                            int danoInimigo = inimigo.atacar(inimigo.getAtqBase());
+                            System.out.println(inimigo.getNome() + " usou GOLPE GIRATÓRIO!");
+                            System.out.printf("%s deu %d de dano em TODOS OS ALIADOS\n", inimigo.getNome(), danoInimigo);
+
+                            for (Personagem aliado : aliados) {
+                                aliado.setVida(aliado.getVida() - danoInimigo);
+                                if (aliado.getVida() <= 0) {
+                                    System.out.printf("%s morreu!\n", aliado.getNome());
+                                    aliadoParaRemover = aliado;
+                                    break;
+                                }
+                            }
+
+                        } else if (inimigo.getClasse().equals(ClassePersonagem.MAGO)) {
+
+                            int danoInimigo = inimigo.atacar(inimigo.getAtqBase()) * 2;
+                            Personagem aliadoEscolhido = aliados.get(r.nextInt(aliados.size()));
+                            System.out.println(inimigo.getNome() + " usou EXPLOSION!");
+                            aliadoEscolhido.setVida(aliadoEscolhido.getVida() - danoInimigo);
+                            System.out.printf("%s deu %d de dano em %s\n", inimigo.getNome(), danoInimigo, aliadoEscolhido.getNome());
+
+                            if (aliadoEscolhido.getVida() <= 0) {
+                                System.out.printf("%s morreu!\n", aliadoEscolhido.getNome());
+                                aliadoParaRemover = aliadoEscolhido;
+                            }
+
+                        } else if (inimigo.getClasse().equals(ClassePersonagem.ARQUEIRO)) {
+
+                            int danoInimigo = inimigo.atacar(inimigo.getAtqBase());
+                            Personagem aliadoEscolhido = aliados.get(r.nextInt(aliados.size()));
+                            System.out.println(inimigo.getNome() + " usou TIRO CERTEIRO!");
+                            aliadoEscolhido.setVida(aliadoEscolhido.getVida() - danoInimigo);
+                            System.out.printf("%s deu %d de dano em %s\n", inimigo.getNome(), danoInimigo, aliadoEscolhido.getNome());
+                            aliadoEscolhido.setMachucado(true);
+
+                            if (aliadoEscolhido.getVida() <= 0) {
+                                System.out.printf("%s morreu!\n", aliadoEscolhido.getNome());
+                                aliadoParaRemover = aliadoEscolhido;
+                            }
+
+                        } else if (inimigo.getClasse().equals(ClassePersonagem.BARDO)) {
+
+                            Personagem inimigoEscolhido = inimigos.get(r.nextInt(inimigos.size()));
+                            System.out.println(inimigo.getNome() + " usou MÚSICA PARA OS MEUS OUVIDOS!");
+                            inimigoEscolhido.setVida(inimigoEscolhido.getVida() + 6);
+                            if (inimigoEscolhido.getVida() >= 20) {
+                                inimigoEscolhido.setVida(20);
+                            }
+                        }
+
+                        if (aliadoParaRemover != null) {
+                            aliados.remove(aliadoParaRemover);
+                        }
+
+                        inimigo.setCansado(true);
+                    }
                 }
             }
-
         } else {
-            System.out.println("Não existem inimigos em campo.");
+            System.out.println("Não existem inimigos ou aliados em campo.");
         }
     }
 }

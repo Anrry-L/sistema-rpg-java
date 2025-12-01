@@ -8,7 +8,7 @@ public class Main {
 
         Party pt = new Party();
         boolean running = true;
-        int escolha;
+        int escolhaAcao;
 
         while (running) {
             System.out.println("     ---MENU---");
@@ -18,10 +18,10 @@ public class Main {
             System.out.println("4 - Turno de combate");
             System.out.println("5 - Encerrar");
 
-            escolha = s.nextInt();
+            escolhaAcao = s.nextInt();
             s.nextLine();
 
-            switch (escolha){
+            switch (escolhaAcao){
                 case 1 : pt.adicionarAliado(); break;
                 case 2 : pt.adicionarInimigo(); break;
                 case 3 : pt.listarPersonagens(); break;
