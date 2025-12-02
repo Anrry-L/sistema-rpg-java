@@ -1,16 +1,24 @@
 package personagens;
 
+import enums.ClasseItens;
 import enums.ClassePersonagem;
+import sistema.Itens;
 import java.util.ArrayList;
 
 public class Personagem {
 
+    private ClasseItens itensC;
     private String nome;
     private int vida = 20;
     private int atqBase = 4;
     private ClassePersonagem classe;
     private boolean cansado = false;
     private boolean machucado = false;
+
+
+    public ClasseItens getItens(){
+        return itensC;
+    }
 
     public boolean getMachucado(){
         return machucado;

@@ -2,6 +2,7 @@ package sistema;
 
 import personagens.*;
 import enums.ClassePersonagem;
+import enums.ClasseItens;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -35,6 +36,12 @@ public class Party {
             case 4 : personagem = new Bardo(); personagem.setClasse(ClassePersonagem.BARDO); break;
             default: System.out.println("Opção inválida");
         }
+
+        ArrayList<Itens> itens = new ArrayList<>();
+
+        Itens pocaoCura = null;
+
+        itens.add(pocaoCura);
 
         aliados.add(personagem);
 
